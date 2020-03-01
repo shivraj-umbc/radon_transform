@@ -6,7 +6,7 @@
 
 u32 N;
 char *line = "   xxx     xxxxxxxx   xx xxxx   xx xxxxx  xxxxxxx   xxx  xxxx   ";
-
+printf("dasd");
 typedef struct ContigSeg
 {
 	u32 idx1, idx2, sum;
