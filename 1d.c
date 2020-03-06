@@ -134,12 +134,12 @@ int main()
 			LineSeg C;
 
 			//printf("-----\n");
-			printf("A:\n");
-			PrintLineSeg(A);
+			//printf("A:\n");
+			//PrintLineSeg(A);
 			
 			//printf("-----\n");
-			printf("B:\n");
-			PrintLineSeg(B);			
+			//printf("B:\n");
+			//PrintLineSeg(B);			
 			
 			// Append the segments to a list of segments
 			//  xx xxxx xx|xxx xx xxxx
@@ -152,10 +152,10 @@ int main()
 			segs[4]=B.longest;
 			segs[5]=B.end;
 
-			printf("==== segs ====\n");
-			for (i=0; i<nSegs; i++)
-				printf("segs[%d] idx1 %d idx2 %d sum %d\n",
-					i, segs[i].first, segs[i].last, segs[i].sum);
+			//printf("==== segs ====\n");
+			//for (i=0; i<nSegs; i++)
+				//printf("segs[%d] idx1 %d idx2 %d sum %d\n",
+					//i, segs[i].first, segs[i].last, segs[i].sum);
 			
 			// Remove Duplicates
 			ContigSeg nodup_segs[6];
@@ -168,10 +168,10 @@ int main()
 					nodup_segs[nNodup_segs++] = segs[i];
 			}
 
-			printf("==== nodup_segs ====\n");
-			for (i=0; i<nNodup_segs; i++)
-				printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
-					i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
+			//printf("==== nodup_segs ====\n");
+			//for (i=0; i<nNodup_segs; i++)
+				//printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
+					//i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
 			
 			// Merge the segments into a single list of combined segments
 			
@@ -182,8 +182,8 @@ int main()
 				if (i<nNodup_segs-1 && nodup_segs[i].last == nodup_segs[i+1].first)
 				{
 					merged_segs[nMerged_segs].first = nodup_segs[i].first;
-					merged_segs[nMerged_segs].last = nodup_segs[i+k].last;
-					merged_segs[nMerged_segs++].sum = nodup_segs[i].sum + nodup_segs[i+k].sum;
+					merged_segs[nMerged_segs].last = nodup_segs[i+1].last;
+					merged_segs[nMerged_segs++].sum = nodup_segs[i].sum + nodup_segs[i+1].sum;
 					i++;
 				}
 				else
@@ -211,9 +211,9 @@ int main()
 			
 			T[L][p] = C;
 
-			printf("-----\n");
-			printf("C:\n");
-			PrintLineSeg(C);
+			//printf("-----\n");
+			//printf("C:\n");
+			//PrintLineSeg(C);
 		}
 		
 		nProb /= 2;
