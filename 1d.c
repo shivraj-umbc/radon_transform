@@ -39,6 +39,7 @@ void PrintLineSeg(LineSeg s)
 			printf("e2 sum: %d  ", s.end.sum);
 
 		// longest
+		
 		if (i == s.longest.first)
 			printf("L1 ");
 		if (i == s.longest.last)
@@ -63,7 +64,7 @@ int main()
 
 	// How long is the string
 	N = strlen(line);
-//	N = 16;
+	N = 16;
 
 	// How many levels
 	u32 nLev = 1;
@@ -100,6 +101,7 @@ int main()
 			T[0][p].end.sum = 1;
 		}
 		else                   // We do not have a line
+
 		{
 			T[0][p].start.first = p;
 			T[0][p].start.last = p;
@@ -133,13 +135,13 @@ int main()
 			LineSeg B = T[L-1][2*p+1];
 			LineSeg C;
 
-			//printf("-----\n");
-			//printf("A:\n");
-			//PrintLineSeg(A);
+			printf("-----\n");
+			printf("A:\n");
+			PrintLineSeg(A);
 			
-			//printf("-----\n");
-			//printf("B:\n");
-			//PrintLineSeg(B);			
+			printf("-----\n");
+			printf("B:\n");
+			PrintLineSeg(B);			
 			
 			// Append the segments to a list of segments
 			//  xx xxxx xx|xxx xx xxxx
@@ -152,68 +154,98 @@ int main()
 			segs[4]=B.longest;
 			segs[5]=B.end;
 
-			//printf("==== segs ====\n");
-			//for (i=0; i<nSegs; i++)
-				//printf("segs[%d] idx1 %d idx2 %d sum %d\n",
-					//i, segs[i].first, segs[i].last, segs[i].sum);
+			printf("==== segs ====\n");
+			for (i=0; i<nSegs; i++)
+				printf("segs[%d] idx1 %d idx2 %d sum %d\n",
+					i, segs[i].first, segs[i].last, segs[i].sum);
 			
-			// Remove Duplicates
-			ContigSeg nodup_segs[6];
-			int nNodup_segs=1;
-			nodup_segs[0] = segs[0];
-			for (i=1; i<6; i++)
+			//Remove zero length segments
+			ContigSeg noZerosegs[6];
+			int numzerosegs = 0;
+			for(i=0; i<6; i++){
+					if(segs[i].first != segs[i].last){
+						noZerosegs[numzerosegs++] = segs[i];
+					}
+			}
+			printf("%d\n", numzerosegs);
+			printf("====non zero segs ====\n");
+			for (i=0; i<numzerosegs; i++)
+				printf("noZerosegs[%d] first  %d last %d sum %d\n",
+					i, noZerosegs[i].first, noZerosegs[i].last, noZerosegs[i].sum);
+			
+			if(numzerosegs!=0)
 			{
-				if ( (segs[i].first!=nodup_segs[nNodup_segs-1].first ||
-					  segs[i].last!=nodup_segs[nNodup_segs-1].last) )
-					nodup_segs[nNodup_segs++] = segs[i];
+				// Remove Duplicates
+				ContigSeg nodup_segs[6];
+				int nNodup_segs=1;
+				nodup_segs[0] = noZerosegs[0];
+				for (i=1; i<numzerosegs; i++)
+				{
+					if ( (noZerosegs[i].first!=nodup_segs[nNodup_segs-1].first ||
+						noZerosegs[i].last!=nodup_segs[nNodup_segs-1].last) )
+						nodup_segs[nNodup_segs++] = noZerosegs[i];
+				}
+
+				printf("==== nodup_segs ====\n");
+				for (i=0; i<nNodup_segs; i++)
+					printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
+						i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
+				
+				// Merge the segments into a single list of combined segments
+				
+				ContigSeg merged_segs[6];
+				int nMerged_segs=0;
+				for (i=0; i<nNodup_segs; i++)
+				{
+	//				if (i<nNodup_segs-1 && nodup_segs[i].last == nodup_segs[i+1].first)
+					if (i<nNodup_segs-1 && nodup_segs[i+1].first - nodup_segs[i].last <= k)
+					{
+						merged_segs[nMerged_segs].first = nodup_segs[i].first;
+						merged_segs[nMerged_segs].last = nodup_segs[i+1].last;
+						merged_segs[nMerged_segs++].sum = nodup_segs[i].sum + nodup_segs[i+1].sum;
+						i++;
+					}
+					else
+					{
+						merged_segs[nMerged_segs++] = nodup_segs[i];
+					}
+				}
+				
+	//			printf("==== merged_segs ====\n");
+				for (i=0; i<nMerged_segs; i++)
+					printf("merged_segs[%d] idx1 %d idx2 %d sum %d\n",
+						i, merged_segs[i].first, merged_segs[i].last, merged_segs[i].sum);
+			
+				// Keep the start, longest, and end into C
+				C.start = merged_segs[0];                  // What if these are length 0 ??
+				C.end   = merged_segs[nMerged_segs-1];
+				
+				int longest_idx = 0;
+				for (i=1; i<nMerged_segs; i++)
+				{
+					if (merged_segs[i].sum > merged_segs[longest_idx].sum)
+						longest_idx = i;
+				}
+				C.longest = merged_segs[longest_idx];
+				
+				T[L][p] = C;
+			}
+			else
+			{
+				T[L][p].start.first = A.start.first;
+				T[L][p].start.last = A.start.first;
+				T[L][p].start.sum = 0;
+				T[L][p].longest.first  = A.start.first;
+				T[L][p].longest.last  = A.start.first;
+				T[L][p].longest.sum = 0;
+				T[L][p].end.first   =  B.end.last;
+				T[L][p].end.last   = B.end.last;
+				T[L][p].end.sum = 0;
 			}
 
-			//printf("==== nodup_segs ====\n");
-			//for (i=0; i<nNodup_segs; i++)
-				//printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
-					//i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
-			
-			// Merge the segments into a single list of combined segments
-			
-			ContigSeg merged_segs[6];
-			int nMerged_segs=0;
-			for (i=0; i<nNodup_segs; i++)
-			{
-				if (i<nNodup_segs-1 && nodup_segs[i].last == nodup_segs[i+1].first)
-				{
-					merged_segs[nMerged_segs].first = nodup_segs[i].first;
-					merged_segs[nMerged_segs].last = nodup_segs[i+1].last;
-					merged_segs[nMerged_segs++].sum = nodup_segs[i].sum + nodup_segs[i+1].sum;
-					i++;
-				}
-				else
-				{
-					merged_segs[nMerged_segs++] = nodup_segs[i];
-				}
-			}
-			
-//			printf("==== merged_segs ====\n");
-			//for (i=0; i<nMerged_segs; i++)
-				//printf("merged_segs[%d] idx1 %d idx2 %d sum %d\n",
-					//i, merged_segs[i].idx1, merged_segs[i].idx2, merged_segs[i].sum);
-		
-			// Keep the start, longest, and end into C
-			C.start = merged_segs[0];                  // What if these are length 0 ??
-			C.end   = merged_segs[nMerged_segs-1];
-			
-			int longest_idx = 0;
-			for (i=1; i<nMerged_segs; i++)
-			{
-				if (merged_segs[i].sum > merged_segs[longest_idx].sum)
-					longest_idx = i;
-			}
-			C.longest = merged_segs[longest_idx];
-			
-			T[L][p] = C;
-
-			//printf("-----\n");
-			//printf("C:\n");
-			//PrintLineSeg(C);
+			printf("-----\n");
+			printf("C:\n");
+			PrintLineSeg(C);
 		}
 		
 		nProb /= 2;
