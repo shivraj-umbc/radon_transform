@@ -56,9 +56,7 @@ int main()
 {
 	u32 i,p,L;
 
-	int k;
-    printf("Enter the value of k: ");
-	k = getchar();
+	
 	//printf("k : %c", k);
 	printf("FUBAR\n");
 
@@ -116,7 +114,9 @@ int main()
 
 //		PrintLineSeg(T[0][p]);
 	}
-	
+	int k;
+    printf("Enter the value of k: ");
+	scanf("%d", &k);
 	// For every subproblem
 	subsize = 2;
 
@@ -161,25 +161,27 @@ int main()
 			
 			//Remove zero length segments
 			ContigSeg noZerosegs[6];
-			int numzerosegs = 0;
-			for(i=0; i<6; i++){
-					if(segs[i].first != segs[i].last){
-						noZerosegs[numzerosegs++] = segs[i];
+			int numnonzerosegs = 0;
+			for(i=0; i<6; i++)
+			{
+					if(segs[i].first != segs[i].last)
+					{
+						noZerosegs[numnonzerosegs++] = segs[i];
 					}
 			}
-			printf("%d\n", numzerosegs);
+			printf("%d\n", numnonzerosegs);
 			printf("====non zero segs ====\n");
-			for (i=0; i<numzerosegs; i++)
+			for (i=0; i<numnonzerosegs; i++)
 				printf("noZerosegs[%d] first  %d last %d sum %d\n",
 					i, noZerosegs[i].first, noZerosegs[i].last, noZerosegs[i].sum);
-			
-			if(numzerosegs!=0)
+
+			if(numnonzerosegs!=0)
 			{
 				// Remove Duplicates
 				ContigSeg nodup_segs[6];
 				int nNodup_segs=1;
 				nodup_segs[0] = noZerosegs[0];
-				for (i=1; i<numzerosegs; i++)
+				for (i=1; i<numnonzerosegs; i++)
 				{
 					if ( (noZerosegs[i].first!=nodup_segs[nNodup_segs-1].first ||
 						noZerosegs[i].last!=nodup_segs[nNodup_segs-1].last) )
@@ -192,7 +194,7 @@ int main()
 						i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
 				
 				// Merge the segments into a single list of combined segments
-				
+				printf("%d\n", k);
 				ContigSeg merged_segs[6];
 				int nMerged_segs=0;
 				for (i=0; i<nNodup_segs; i++)
@@ -200,6 +202,7 @@ int main()
 	//				if (i<nNodup_segs-1 && nodup_segs[i].last == nodup_segs[i+1].first)
 					if (i<nNodup_segs-1 && nodup_segs[i+1].first - nodup_segs[i].last <= k)
 					{
+						//printf("%d\n", nodup_segs[i+1].first - nodup_segs[i].last);
 						merged_segs[nMerged_segs].first = nodup_segs[i].first;
 						merged_segs[nMerged_segs].last = nodup_segs[i+1].last;
 						merged_segs[nMerged_segs++].sum = nodup_segs[i].sum + nodup_segs[i+1].sum;
@@ -232,15 +235,16 @@ int main()
 			}
 			else
 			{
-				T[L][p].start.first = A.start.first;
-				T[L][p].start.last = A.start.first;
-				T[L][p].start.sum = 0;
-				T[L][p].longest.first  = A.start.first;
-				T[L][p].longest.last  = A.start.first;
-				T[L][p].longest.sum = 0;
-				T[L][p].end.first   =  B.end.last;
-				T[L][p].end.last   = B.end.last;
-				T[L][p].end.sum = 0;
+				C.start.first = A.start.first;
+				C.start.last = A.start.first;
+				C.start.sum = 0;
+				C.longest.first  = A.start.first;
+				C.longest.last  = A.start.first;
+				C.longest.sum = 0;
+				C.end.first =  B.end.last;
+				C.end.last = B.end.last;
+				C.end.sum = 0;
+				T[L][p] = C;
 			}
 
 			printf("-----\n");
