@@ -4,7 +4,12 @@
 
 #define u32 unsigned int
 
-u32 N;
+u32 N; // N = width =height
+int L; //level
+int k; //skew
+int H; //height=2^L
+int S; // stack
+int F; //Offset
 
 int main()
 {
