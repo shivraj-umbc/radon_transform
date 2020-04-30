@@ -34,7 +34,7 @@ int main()
 	int rows, cols, chan;
 
     byte ***img = LoadRgb(".\\TestImage.bmp", &rows, &cols, &chan);
-    printf("img %p rows %d cols %d chan %d\n", img, rows, cols, chan);
+    //printf("img %p rows %d cols %d chan %d\n", img, rows, cols, chan);
 
 	byte **gray = malloc2d(rows, cols);
 	for (y=0; y<rows; y++){
@@ -54,67 +54,68 @@ int main()
 		subsize *= 2;
 		nLev++;
 	}
-	printf("nlev %d\n", nLev);
+	//printf("nlev %d\n", nLev);
 
     LineSeg**** T;
     T = (LineSeg****)malloc(nLev* sizeof(LineSeg***));
 
     //Initialisation of these variables before performing loops
     
-    // Copy problems of size 1 Take a look at this
-	// for (int p=0; p<N; p++)
-	// {
-	// 	if (line[p] == 'x')    // We have a length 1 line
-	// 	{
-	// 		T[0][p].start.first = p;
-	// 		T[0][p].start.last = p+1;
-	// 		T[0][p].start.sum = 1;
-	// 		T[0][p].longest.first  = p;
-	// 		T[0][p].longest.last  = p+1;
-	// 		T[0][p].longest.sum = 1;
-	// 		T[0][p].end.first   = p;
-	// 		T[0][p].end.last   = p+1;
-	// 		T[0][p].end.sum = 1;
-	// 	}
-	// 	else                   // We do not have a line
+    //Copy problems of size 1 Take a look at this
+     T[0] = (LineSeg***)malloc(N * sizeof(LineSeg**));
+     
+    S =0; L = 0;
+    
+	for (int s=0; s<N; s++)
+	{
+        T[0][s] = (LineSeg**)malloc(1 * sizeof(LineSeg*));
+        T[0][s][0] = (LineSeg*)malloc(N * sizeof(LineSeg));
+        for(int f = 0; f < N; f++){
+            if(gray[s][f] != 0){
+                
 
-	// 	{
-	// 		T[0][p].start.first = p;
-	// 		T[0][p].start.last = p;
-	// 		T[0][p].start.sum = 0;
-	// 		T[0][p].longest.first  = p;
-	// 		T[0][p].longest.last  = p;
-	// 		T[0][p].longest.sum = 0;
-	// 		T[0][p].end.first   = p+1;
-	// 		T[0][p].end.last   = p+1;
-	// 		T[0][p].end.sum = 0;
-	// 	}
-    //		PrintLineSeg(T[0][p]);
-    //}
-
-	
-
+                T[0][s][0][f].start.first = s;
+			    T[0][s][0][f].start.last = s+1;
+			    T[0][s][0][f].start.sum = 1;
+			    T[0][s][0][f].longest.first  = s;
+			    T[0][s][0][f].longest.last  = s+1;
+			    T[0][s][0][f].longest.sum = 1;
+			    T[0][s][0][f].end.first   = s;
+			    T[0][s][0][f].end.last   = s+1;
+			    T[0][s][0][f].end.sum = 1;
+            }else{
+                T[0][s][0][f].start.first = s;
+			    T[0][s][0][f].start.last = s;
+                T[0][s][0][f].start.sum = 0;
+                T[0][s][0][f].longest.first  = s;
+                T[0][s][0][f].longest.last  = s;
+                T[0][s][0][f].longest.sum = 0;
+                T[0][s][0][f].end.first   = s+1;
+                T[0][s][0][f].end.last   = s+1;
+                T[0][s][0][f].end.sum = 0;
+            }
+        }
+    }
 
     ////////
     L = 1;
     S = N/2;
     H = 2;
     while(H<=N){
-        
        T[L] = (LineSeg***)malloc(S * sizeof(LineSeg**));
        for(int s = 0; s < S ; s++){
+           printf("s = %d , L= %d \n", s,L);
            K = H;
            T[L][s] = (LineSeg**)malloc(K * sizeof(LineSeg*));
-           for(int k = 0; k< K; K++){
+           for(int k = 0; k< K; k++){
                F = N+k;
                 T[L][s][k] = (LineSeg*)malloc(F * sizeof(LineSeg));
                 for(int f = 0; f <F; f++){
-                  
-                    
+ 
                     //calculate A and B and combine into C
 
                     LineSeg A = T[L-1][2*s][k/2][f];
-			        LineSeg B = T[L-1][2*s+1][k/2][f-(k+1)/2];
+			        LineSeg B = T[L-1][(2*s)+1][k/2][f-(k+1)/2];
 			        LineSeg C;
                    
                     // Append the segments to a list of segments
@@ -128,10 +129,10 @@ int main()
                     segs[4]=B.longest;
                     segs[5]=B.end;
 
-                    printf("==== segs ====\n");
-                    for (int i=0; i<nSegs; i++)
-                        printf("segs[%d] idx1 %d idx2 %d sum %d\n",
-                            i, segs[i].first, segs[i].last, segs[i].sum);
+                   // printf("==== segs ====\n");
+                    // for (int i=0; i<nSegs; i++)
+                    //     printf("segs[%d] idx1 %d idx2 %d sum %d\n",
+                    //         i, segs[i].first, segs[i].last, segs[i].sum);
                     
                     //Remove zero length segments
                     ContigSeg noZerosegs[6];
@@ -143,11 +144,11 @@ int main()
                                 noZerosegs[numnonzerosegs++] = segs[i];
                             }
                     }
-                    printf("%d\n", numnonzerosegs);
-                    printf("====non zero segs ====\n");
-                    for (int i=0; i<numnonzerosegs; i++)
-                        printf("noZerosegs[%d] first  %d last %d sum %d\n",
-                            i, noZerosegs[i].first, noZerosegs[i].last, noZerosegs[i].sum);
+                    // printf("%d\n", numnonzerosegs);
+                    // printf("====non zero segs ====\n");
+                    // for (int i=0; i<numnonzerosegs; i++)
+                    //     printf("noZerosegs[%d] first  %d last %d sum %d\n",
+                    //         i, noZerosegs[i].first, noZerosegs[i].last, noZerosegs[i].sum);
 
                     if(numnonzerosegs!=0)
                     {
@@ -162,13 +163,13 @@ int main()
                                 nodup_segs[nNodup_segs++] = noZerosegs[i];
                         }
 
-                        printf("==== nodup_segs ====\n");
-                        for (int i=0; i<nNodup_segs; i++)
-                            printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
-                                i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
+                        // printf("==== nodup_segs ====\n");
+                        // for (int i=0; i<nNodup_segs; i++)
+                        //     printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
+                        //         i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
                         
                         // Merge the segments into a single list of combined segments
-                        printf("%d\n", k);
+                       // printf("%d\n", k);
                         ContigSeg merged_segs[6];
                         int nMerged_segs=0;
                         for (int i=0; i<nNodup_segs; i++)
@@ -189,9 +190,9 @@ int main()
                         }
                         
             //			printf("==== merged_segs ====\n");
-                        for (int i=0; i<nMerged_segs; i++)
-                            printf("merged_segs[%d] idx1 %d idx2 %d sum %d\n",
-                                i, merged_segs[i].first, merged_segs[i].last, merged_segs[i].sum);
+                        // for (int i=0; i<nMerged_segs; i++)
+                        //     printf("merged_segs[%d] idx1 %d idx2 %d sum %d\n",
+                        //         i, merged_segs[i].first, merged_segs[i].last, merged_segs[i].sum);
                     
                         // Keep the start, longest, and end into C
                         C.start = merged_segs[0];                  // What if these are length 0 ??
@@ -229,4 +230,6 @@ int main()
        H = 2*H;
        S = S/2;
     }
+
+    printf("Successfully completed!!! \n ");
 }
