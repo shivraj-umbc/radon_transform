@@ -62,7 +62,7 @@ int main()
 
 	// How long is the string
 	N = strlen(line);
-	N = 16;
+	//N = 16;
 
 	// How many levels
 	u32 nLev = 1;
@@ -135,13 +135,13 @@ int main()
 			LineSeg B = T[L-1][2*p+1];
 			LineSeg C;
 
-			printf("-----\n");
-			printf("A:\n");
-			PrintLineSeg(A);
+			//printf("-----\n");
+			//printf("A:\n");
+			//PrintLineSeg(A);
 			
-			printf("-----\n");
-			printf("B:\n");
-			PrintLineSeg(B);			
+			//printf("-----\n");
+			//printf("B:\n");
+			//PrintLineSeg(B);			
 			
 			// Append the segments to a list of segments
 			//  xx xxxx xx|xxx xx xxxx
@@ -169,11 +169,11 @@ int main()
 						noZerosegs[numnonzerosegs++] = segs[i];
 					}
 			}
-			printf("%d\n", numnonzerosegs);
-			printf("====non zero segs ====\n");
-			for (i=0; i<numnonzerosegs; i++)
-				printf("noZerosegs[%d] first  %d last %d sum %d\n",
-					i, noZerosegs[i].first, noZerosegs[i].last, noZerosegs[i].sum);
+			//printf("%d\n", numnonzerosegs);
+			//printf("====non zero segs ====\n");
+			//for (i=0; i<numnonzerosegs; i++)
+				//printf("noZerosegs[%d] first  %d last %d sum %d\n",
+					//i, noZerosegs[i].first, noZerosegs[i].last, noZerosegs[i].sum);
 
 			if(numnonzerosegs!=0)
 			{
@@ -188,10 +188,10 @@ int main()
 						nodup_segs[nNodup_segs++] = noZerosegs[i];
 				}
 
-				printf("==== nodup_segs ====\n");
-				for (i=0; i<nNodup_segs; i++)
-					printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
-						i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
+				//printf("==== nodup_segs ====\n");
+				//for (i=0; i<nNodup_segs; i++)
+					//printf("nodup_segs[%d] idx1 %d idx2 %d sum %d\n",
+						//i, nodup_segs[i].first, nodup_segs[i].last, nodup_segs[i].sum);
 				
 				// Merge the segments into a single list of combined segments
 				printf("%d\n", k);

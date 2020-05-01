@@ -9,10 +9,9 @@
 u32 N; // N = width =height  populate this with row/height of the image
 int L; //level
 int K; //skew
-
+ //
 int S; // stack
 int F; //Offset
-
 int H; //height=2^L
 
 typedef struct ContigSeg
@@ -29,11 +28,13 @@ typedef struct LineSeg
 
 int main()
 {
+    _Bool flag_1 = 0;
+    _Bool flag_2 = 0;
     //loading a image file
     int y,x;
 	int rows, cols, chan;
 
-    byte ***img = LoadRgb(".\\TestImage.bmp", &rows, &cols, &chan);
+    byte ***img = LoadRgb(".\\TestImage_2.bmp", &rows, &cols, &chan);
     //printf("img %p rows %d cols %d chan %d\n", img, rows, cols, chan);
 
 	byte **gray = malloc2d(rows, cols);
@@ -111,13 +112,30 @@ int main()
                F = N+k;
                 T[L][s][k] = (LineSeg*)malloc(F * sizeof(LineSeg));
                 for(int f = 0; f <F; f++){
- 
+                     LineSeg C;
+                     LineSeg A;
+                     LineSeg B;
                     //calculate A and B and combine into C
-
-                    LineSeg A = T[L-1][2*s][k/2][f];
-			        LineSeg B = T[L-1][(2*s)+1][k/2][f-(k+1)/2];
-			        LineSeg C;
-                   
+                    if(f < k)
+                    {
+                     A = T[L-1][2*s][k/2][f];
+                     flag_1 = 1;
+                    }
+                    else
+                    {
+                        flag_1 = 0;
+                    }
+                    if(f-(k+1)/2 >= 0)
+                    {
+			        B = T[L-1][(2*s)+1][k/2][f-(k+1)/2];
+                    flag_2 = 1;
+                    }
+                    else
+                    {
+                        flag_2 = 0;
+                    }
+                    if(flag_1 == 1 && flag_2 == 1)
+                    {          
                     // Append the segments to a list of segments
                     //  xx xxxx xx|xxx xx xxxx
                     ContigSeg segs[6];   // appended segments
@@ -217,11 +235,21 @@ int main()
                         C.end.first =  B.end.last;
                         C.end.last = B.end.last;
                         C.end.sum = 0;			
-                    }
+                    }               
                     //
-                    T[L][s][k][f] = C;
+                    
+                    }
+                else if(flag_1 == 0 && flag_2 == 1)
+                {
+                    C = B;
                 }
-
+                else if(flag_1 == 1 && flag_2 == 0)
+                {
+                    C = A;
+                }
+                 T[L][s][k][f] = C;
+                } 
+                   
            }
 
        }
@@ -231,5 +259,5 @@ int main()
        S = S/2;
     }
 
-    printf("Successfully completed!!! \n ");
-}
+    printf("Successfully completed!!!* \n ");
+     }
