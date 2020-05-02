@@ -258,6 +258,18 @@ int main()
        H = 2*H;
        S = S/2;
     }
+    printf("Successfully finished dynamic programming !!!* \n now step to output image \n");
+    // generating ouput file
 
-    printf("Successfully completed!!!* \n ");
-     }
+    byte **output_image = malloc2d(rows, rows);
+    printf("ok \n");
+	for (int y=0; y< rows; y++){
+		for (int x=0; x<rows; x++) {
+            printf("value of T[%d][%d][%d][%d] is : %d ",L-1, 0, x, y, T[L-1][0][x][y].longest.sum/30);
+			output_image[y][x] =  T[L-1][S-1][y][x].longest.sum/30;
+		}
+	}
+printf("loops over \n");	
+	SaveGrayPng(output_image, "output_hough_Transform.png", rows, cols);
+    printf("image is generated \n");
+}
