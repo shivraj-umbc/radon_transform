@@ -34,7 +34,7 @@ int main()
     int y,x;
 	int rows, cols, chan;
 
-    byte ***img = LoadRgb(".\\TestImage_2.bmp", &rows, &cols, &chan);
+    byte ***img = LoadRgb(".\\TestImage.bmp", &rows, &cols, &chan);
     //printf("img %p rows %d cols %d chan %d\n", img, rows, cols, chan);
 
 	byte **gray = malloc2d(rows, cols);
@@ -265,15 +265,13 @@ int main()
     printf("ok \n");
 	for (int y=0; y< rows; y++){
 		for (int x=0; x<rows; x++) {
-			if(!(T[L-1][S-1][y][x].longest.sum))
-                 output_image[y][x] = 0;
-            else{
-                printf("value of T[%d][%d][%d][%d] is : %d ",L, 0, x, y, T[L][0][x][y].longest.sum/30);
-                output_image[y][x] =  T[L-1][S-1][y][x].longest.sum/30;
-            }
+			// if(!(T[L-1][0][y][x].longest.sum))
+            //      output_image[y][x] = 0;
+            // else{
+                output_image[y][x] =  T[L-1][0][y][x].longest.sum;
+            // }
 		}
 	}
-printf("loops over \n");	
 	SaveGrayPng(output_image, "output_hough_Transform.png", rows, cols);
     printf("image is generated \n");
 }
