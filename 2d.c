@@ -34,7 +34,7 @@ int main()
     int y,x;
 	int rows, cols, chan;
 
-    byte ***img = LoadRgb(".\\TestImage.bmp", &rows, &cols, &chan);
+    byte ***img = LoadRgb(".\\TestImage_3.bmp", &rows, &cols, &chan);
     //printf("img %p rows %d cols %d chan %d\n", img, rows, cols, chan);
 
 	byte **gray = malloc2d(rows, cols);
@@ -105,7 +105,7 @@ int main()
     while(H<=N){
        T[L] = (LineSeg***)malloc(S * sizeof(LineSeg**));
        for(int s = 0; s < S ; s++){
-           printf("s = %d , L= %d \n", s,L);
+           //printf("s = %d , L= %d \n", s,L);
            K = H;
            T[L][s] = (LineSeg**)malloc(K * sizeof(LineSeg*));
            for(int k = 0; k< K; k++){
@@ -116,7 +116,7 @@ int main()
                      LineSeg A;
                      LineSeg B;
                     //calculate A and B and combine into C
-                    if(f < k)
+                    if(f < (N + k/2))
                     {
                      A = T[L-1][2*s][k/2][f];
                      flag_1 = 1;
@@ -134,8 +134,17 @@ int main()
                     {
                         flag_2 = 0;
                     }
+
                     if(flag_1 == 1 && flag_2 == 1)
                     {          
+                        flag_1 =0, flag_2 =0;  
+              
+                        if(s ==0 && k == 0){
+                    
+                           // printf("A start.first %d, start.last %d, start.sum %d  \n", A.start.first, A.start.last,  A.start.sum);
+                            //printf("B start.first %d, start.last %d, start.sum %d  \n", B.start.first, B.start.last,  B.start.sum);
+                        }
+                        
                     // Append the segments to a list of segments
                     //  xx xxxx xx|xxx xx xxxx
                     ContigSeg segs[6];   // appended segments
@@ -263,15 +272,27 @@ int main()
 
     byte **output_image = malloc2d(rows, rows);
     printf("ok \n");
+    int pixel_value = 255;
 	for (int y=0; y< rows; y++){
 		for (int x=0; x<rows; x++) {
 			// if(!(T[L-1][0][y][x].longest.sum))
             //      output_image[y][x] = 0;
             // else{
-                output_image[y][x] =  T[L-1][0][y][x].longest.sum;
+            //     if(T[L-1][0][y][x].longest.sum != 0)
+            //         printf(" img[%d][%d]: T[L-1][0][y][x].start: %d , T[L-1][0][y][x].end - %d, %d\n",y,x, T[L-1][0][y][x].start, T[L-1][0][y][x].end, T[L-1][0][y][x].longest.sum );
+            //    
+                if(T[L-1][0][y][x].longest.sum >255)
+                    output_image[y][x] = pixel_value;
+                else    
+                    output_image[y][x] =  T[L-1][0][y][x].longest.sum;
             // }
 		}
 	}
-	SaveGrayPng(output_image, "output_hough_Transform.png", rows, cols);
-    printf("image is generated \n");
+    // y=0;
+    //  for (int x=0; x< cols; x++){
+    //     printf("T[L-1][0][0][x].start: %d , T[L-1][0][y][x].end - %d, %d\n", T[L-1][0][y][x].start, T[L-1][0][y][x].end, T[L-1][0][y][x].longest.sum );
+    //     output_image[y][x] =  T[L-1][0][y][x].longest.sum;
+    //  }
+	SaveGrayPng(output_image, "output_hough_Transform_3.png", rows, cols);
+    //printf("image is generated \n");
 }
