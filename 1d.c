@@ -124,8 +124,8 @@ int main()
 	L=1;
 	while (subsize <= N)
 	{
-		printf("subsize %d N %d\n", subsize, N);
-		printf("nProb %d\n", nProb);
+		// printf("subsize %d N %d\n", subsize, N);
+		// printf("nProb %d\n", nProb);
 		
 		for (p=0; p<nProb; p++)
 		{
@@ -137,11 +137,11 @@ int main()
 
 			//printf("-----\n");
 			//printf("A:\n");
-			//PrintLineSeg(A);
+			PrintLineSeg(A);
 			
 			//printf("-----\n");
 			//printf("B:\n");
-			//PrintLineSeg(B);			
+			PrintLineSeg(B);			
 			
 			// Append the segments to a list of segments
 			//  xx xxxx xx|xxx xx xxxx
@@ -216,8 +216,8 @@ int main()
 				
 	//			printf("==== merged_segs ====\n");
 				for (i=0; i<nMerged_segs; i++)
-					printf("merged_segs[%d] idx1 %d idx2 %d sum %d\n",
-						i, merged_segs[i].first, merged_segs[i].last, merged_segs[i].sum);
+					// printf("merged_segs[%d] idx1 %d idx2 %d sum %d\n",
+					// 	i, merged_segs[i].first, merged_segs[i].last, merged_segs[i].sum);
 			
 				// Keep the start, longest, and end into C
 				C.start = merged_segs[0];                  // What if these are length 0 ??
@@ -247,9 +247,9 @@ int main()
 				T[L][p] = C;
 			}
 
-			printf("-----\n");
-			printf("C:\n");
-			PrintLineSeg(C);
+			// printf("-----\n");
+			// printf("C:\n");
+			// PrintLineSeg(C);
 		}
 		
 		nProb /= 2;
@@ -260,13 +260,13 @@ int main()
 	LineSeg res = T[nLev-1][0];
 	PrintLineSeg(res);
 	
-	printf("longest segment:\n");
-	printf(" restult start %d end %d sum %d\n", res.longest.first, res.longest.last, res.longest.sum);
+	// printf("longest segment:\n");
+	// printf(" restult start %d end %d sum %d\n", res.longest.first, res.longest.last, res.longest.sum);
 	
 	
-	printf("%s\n", line);
+	// printf("%s\n", line);
 	
-	printf("len %d\n", strlen(line));
+	// printf("len %d\n", strlen(line));
 	
 	return 0;
 }

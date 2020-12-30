@@ -8,6 +8,9 @@
 
 #include "dc_image.h"
 
+#define MAX(a,b)  ((a) > (b) ? (a) : (b))
+#define MIN(a,b)   ((a) < (b) ? (a) : (b))
+#define ABS(x)    ( (x) <= 0 ? 0-(x) : (x) )
 //-------------------------------------------------------
 // A few image helper functions
 //-------------------------------------------------------
@@ -53,6 +56,26 @@ void free3d(byte ***data, int rows, int cols)
 }
 
 
+float **malloc2d_float(int rows, int cols)
+{
+	int y;
+	float **ptr = (float**)malloc(rows*sizeof(float*));
+	for (y=0; y<rows; y++)
+		ptr[y] = (float*)calloc(cols,sizeof(float));
+	return ptr;
+}
+
+float **free2d_float(float ***data, int rows)
+{
+	int y;
+	for (y=0; y<rows; y++)
+		free(data[y]);
+	free(data);
+}
+
+
+
+
 // Loading / Saving Images
 
 void SaveRgbPng(byte ***in, const char *fname, int rows, int cols)
@@ -65,7 +88,7 @@ void SaveRgbPng(byte ***in, const char *fname, int rows, int cols)
 		//printf("y %d rows %d cols %d\n", y, rows, cols);
 		for (x=0; x<cols; x++) {
 			for (c=0; c<3; c++) {
-				data[i++] = in[y][x][c];
+				data[i++] = in[rows-y-1][x][c];
 			}
 		}
 	}
@@ -81,14 +104,35 @@ void SaveGrayPng(byte **in, const char *fname, int rows, int cols)
 	byte *data = malloc(cols*rows*3*sizeof(byte));
 	for (y=0; y<rows; y++) {
 		for (x=0; x<cols; x++) {
-			data[i++] = in[y][x];   // red
-			data[i++] = in[y][x];   // green
-			data[i++] = in[y][x];   // blue
+			data[i++] = in[rows-y-1][x];   // red
+			data[i++] = in[rows-y-1][x];   // green
+			data[i++] = in[rows-y-1][x];   // blue
 //			data[i++] = 255;        // alpha
 		}
 	}
 	stbi_write_png(fname, cols, rows, 3, data, cols*3);
 	free(data);
+}
+
+void DrawLine(int ax, int ay, int bx, int by, byte*** img, int rows, int cols)
+{
+	if(ABS(bx-ax) <= 1 && ABS(by-ay) <= 1)
+	{
+		//byte *data = stbi_load(cols, rows, chan, 3);
+		img[ay][ax][0] = 255;
+		img[ay][ax][1] = 0;
+		img[ay][ax][2] = 0;
+		img[by][bx][0] = 255;
+		img[by][bx][1] = 0;
+		img[by][bx][2] = 0;	
+	}
+	else
+	{
+		int mid_x = (ax + bx)/2;
+		int mid_y = (ay + by)/2;
+		DrawLine(ax, ay, mid_x, mid_y, img, rows, cols);
+		DrawLine(mid_x, mid_y, bx, by,img, rows, cols);
+	}
 }
 
 byte ***LoadRgb(const char *fname, int *rows, int *cols, int *chan)
@@ -116,7 +160,8 @@ byte ***LoadRgb(const char *fname, int *rows, int *cols, int *chan)
 	}
 	*chan = 4;
 	*/
-	if (*chan != 3) {
+	printf("channels: %d", *chan);
+	if (*chan < 3) {
 		printf("error: expected 3 channels (red green blue)\n");
 		exit(1);
 	}
@@ -126,7 +171,7 @@ byte ***LoadRgb(const char *fname, int *rows, int *cols, int *chan)
 	for (y=0; y<*rows; y++)
 		for (x=0; x<*cols; x++)
 			for (c=0; c<*chan; c++)
-				img[y][x][c] = data[i++];
+				img[*rows-y-1][x][c] = data[i++];
 	free(data);
 	printf("done read\n");
 	return img;

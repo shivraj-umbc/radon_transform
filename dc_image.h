@@ -20,6 +20,12 @@ void free2d(byte **data, int rows);
 void free3d(byte ***data, int rows, int cols);
 
 
+float **malloc2d_float(int rows, int cols);
+
+float **free2d_float(float ***data, int rows);
+
+void DrawLine(int ax, int ay, int bx, int by, byte*** img, int rows, int cols);
+
 // Loading / Saving Images
 
 void SaveRgbPng(byte ***in, const char *fname, int cols, int rows);

@@ -8,7 +8,7 @@ int main()
 	int y,x;
 	int rows, cols, chan;
 
-    byte ***img = LoadRgb(".\\TestImage.bmp", &rows, &cols, &chan);
+    byte ***img = LoadRgb(".\\puppy.bmp", &rows, &cols, &chan);
     printf("img %p rows %d cols %d chan %d\n", img, rows, cols, chan);
 
 	byte **gray = malloc2d(rows, cols);
